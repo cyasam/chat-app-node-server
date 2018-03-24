@@ -16,7 +16,7 @@ const UserSchema = new Schema({
     unique: true
   },
   password: { type: String, required: true },
-  activation: { type: Boolean, default: false, required: true },
+  activated: { type: Boolean, default: false, required: true },
   activationKey: { type: String, required: true }
 });
 

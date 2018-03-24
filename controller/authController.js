@@ -56,7 +56,7 @@ const authController = {
 
     return User.findOneAndUpdate({
       activationKey: key
-    }, { activation: true }, (error, haveUser) => {
+    }, { activated: true }, (error, haveUser) => {
       if (error) return res.status(500).send({ status: false, message: 'Internal server Error' });
       if (!haveUser) return res.status(422).send({ status: false, message: 'No Authorized Process.' });
 
@@ -64,14 +64,14 @@ const authController = {
     });
   },
   login(req, res) {
-    if (!req.user) return res.status(401).send({ status: false, message: 'Username/password does not match an existing user' });
+    if (!req.user) return res.status(401);
 
     const token = createToken(req.user);
     return res.status(200).send({
       status: true,
       token,
       message: 'Login successful.',
-      activated: req.user.activation
+      activated: req.user.activated
     });
   }
 };

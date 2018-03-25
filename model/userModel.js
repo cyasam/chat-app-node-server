@@ -29,21 +29,23 @@ UserSchema.set('toJSON', {
 });
 
 UserSchema.methods.comparePassword = function comparePassword(password) {
-  return bcrypt.compare(this.password, password).then(res => res);
+  return bcrypt.compare(password, this.password).then(res => res);
+};
+
+UserSchema.methods.createHashPassword = function createHashPassword(password) {
+  return bcrypt.genSalt(saltRounds)
+    .then(salt => bcrypt.hash(password, salt).then(hash => hash).catch(() => 'hash error'))
+    .catch(() => 'salt error');
 };
 
 UserSchema.pre('save', function preSave(next) {
   const { password } = this;
 
-  bcrypt.genSalt(saltRounds)
-    .then(salt => salt).then((salt) => {
-      bcrypt.hash(password, salt).then((hash) => {
-        this.password = hash;
+  this.createHashPassword(password).then((hash) => {
+    this.password = hash;
 
-        next();
-      }).catch(() => next({ error: 'hash error' }));
-    })
-    .catch(() => next({ error: 'salt error' }));
+    next();
+  }).catch(error => next(error));
 });
 
 const UserModel = mongoose.model('user', UserSchema);

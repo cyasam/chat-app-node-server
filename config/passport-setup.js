@@ -17,12 +17,9 @@ const localStrategySetup = () => {
       if (err) return done(err);
       if (!haveUser) return done(null, false);
 
-      const user = new User({
-        email,
-        password
-      });
+      const user = new User(haveUser);
 
-      return user.comparePassword(haveUser.password).then((isLogined) => {
+      return user.comparePassword(password).then((isLogined) => {
         if (err) return done(err);
         if (!isLogined) return done(null, false);
 

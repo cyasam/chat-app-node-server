@@ -44,7 +44,7 @@ const authController = {
           return newUser.save((error) => {
             if (error) return res.status(500).send({ status: false, message: 'Internal server Error' });
 
-            return res.send({ status: true, message: 'Activation mail has been send. Please check your email and activate your account.' });
+            return res.status(200).send({ status: true, message: 'Activation mail has been send. Please check your email and activate your account.' });
           });
         }).catch(() => res.status(422).send({ status: false, message: 'Activation mail can\'t send.' }));
       }
@@ -60,7 +60,7 @@ const authController = {
       if (error) return res.status(500).send({ status: false, message: 'Internal server Error' });
       if (!haveUser) return res.status(422).send({ status: false, message: 'No Authorized Process.' });
 
-      return res.send({ status: true, message: 'Activation complete. Have fun!' });
+      return res.status(200).send({ status: true, message: 'Activation complete. Have fun!' });
     });
   },
   login(req, res) {

@@ -6,13 +6,13 @@ router.get('/profile', passport.authenticate('jwt', { session: false }), (req, r
   User.findById(req.user.id, (err, user) => {
     if (!user) return res.send({ status: false, message: 'User not found.' });
 
-    const data = {
+    const response = {
       name: user.name,
       email: user.email,
       activated: user.activated
     };
 
-    return res.send({ status: true, data });
+    return res.send({ status: true, ...response });
   });
 });
 
@@ -35,13 +35,13 @@ router.post('/profile/save', passport.authenticate('jwt', { session: false }), (
         if (error) return res.status(500).send({ status: false, message: 'Internal Server Error' });
         if (!haveUser) return res.status(422).send({ status: false, message: 'No Authorized Process.' });
 
-        const data = {
+        const response = {
           name: haveUser.name,
           email: haveUser.email,
           activated: haveUser.activated
         };
 
-        return res.send({ status: true, data, message: 'Profile saved.' });
+        return res.send({ status: true, ...response, message: 'Profile saved.' });
       });
     });
   });

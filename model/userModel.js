@@ -5,6 +5,9 @@ const { bcrypt: { saltRounds } } = require('../config/keys');
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
+  nickname: {
+    type: String
+  },
   name: {
     type: String,
     required: true

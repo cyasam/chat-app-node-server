@@ -67,9 +67,17 @@ const authController = {
     if (!req.user) return res.status(401);
 
     const token = createToken(req.user);
+    const info = {
+      activated: req.user.activated,
+      email: req.user.email,
+      name: req.user.name,
+      nickname: req.user.nickname,
+    };
+
     return res.status(200).send({
       status: true,
       token,
+      info,
       message: 'Login successful.',
       activated: req.user.activated
     });

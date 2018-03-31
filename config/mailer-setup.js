@@ -14,7 +14,7 @@ const accountActivationMail = (email, name, activationKey) => new Promise((resol
     from: `${smtpMail.senderName} ${smtpMail.user}`,
     to: email,
     subject: 'Please activate your account - Example CMS',
-    html: `<p>Hello ${name || 'User'}</p><p><a href="http://192.168.1.13:1234/register/complete?key=${activationKey}">Please activate your account.</a></p>`
+    html: `<p>Hello ${name || 'User'}</p><p><a href="http://localhost:1234/register/complete?key=${activationKey}">Please activate your account.</a></p>`
   };
 
   transporter.sendMail(mailOptions, (error) => {

@@ -22,7 +22,6 @@ const chatController = (io) => {
 
       socket.userId = activeUserId || userId;
       socket.email = email;
-      console.log(socket);
 
       io.sockets.emit('active users', activeUsers);
     });

@@ -15,10 +15,26 @@ const apiController = {
       return res.send({ status: true, ...response });
     });
   },
+  getUsersList(req, res) {
+    User.find({}, (err, usersList) => {
+      if (err) return res.status(500).send({ status: false, message: 'Internal Server Error' });
+      if (!usersList) return res.send({ status: false, message: 'Users not found.' });
+
+      const users = usersList.map(user => ({
+        id: user.id,
+        name: user.name,
+        nickname: user.nickname,
+        email: user.email
+      }));
+
+      return res.send({ status: true, users });
+    });
+  },
   saveProfile(req, res) {
     const { user, body } = req;
 
     User.findById(user._id, (err, currentUser) => {
+      if (err) return res.status(500).send({ status: false, message: 'Internal Server Error' });
       if (!currentUser) return res.send({ status: false, message: 'User not found.' });
 
       const UserSchema = new User(currentUser);

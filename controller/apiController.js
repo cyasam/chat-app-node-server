@@ -65,7 +65,6 @@ const apiController = {
   checkNickname(req, res) {
     const { nickname } = req.query;
     User.findOne({ nickname }, (err, haveNickname) => {
-      console.log(haveNickname);
       if (err) return res.status(500).send({ status: false, message: 'Internal Server Error' });
       if (haveNickname) return res.send({ status: false, message: 'This is taken.' });
 

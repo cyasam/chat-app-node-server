@@ -20,7 +20,8 @@ const UserSchema = new Schema({
   },
   password: { type: String, required: true },
   activated: { type: Boolean, default: false, required: true },
-  activationKey: { type: String, required: true }
+  activationKey: { type: String, required: true },
+  profileImageName: { type: String }
 });
 
 UserSchema.virtual('id').get(function id() {

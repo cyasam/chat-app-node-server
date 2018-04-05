@@ -6,7 +6,7 @@ const cors = require('cors');
 const passportSetup = require('./config/passport-setup');
 const apiRoutes = require('./routes/apiRoutes');
 const authRoutes = require('./routes/authRoutes');
-const { mongoDB } = require('./config/keys');
+const { PORT, mongoDB } = require('./config/keys');
 const chatController = require('./controller/chatController');
 
 const app = express();
@@ -15,12 +15,11 @@ const io = require('socket.io')(http);
 
 mongoose.connect(mongoDB.uri, () => console.log('connected to DB.'));
 
-const PORT = 4567;
-
 app.use(helmet());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.static('public'));
 passportSetup();
 chatController(io);
 

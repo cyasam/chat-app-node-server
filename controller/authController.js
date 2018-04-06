@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const { accountActivationMail } = require('../config/mailer-setup');
 const { token: { secretKey } } = require('../config/keys');
 const { AUTH_EXPIRES_IN } = require('../config/consts');
+const { splitFileName } = require('../helpers');
+const { UPLOADS_URL } = require('../config/consts');
 const User = require('../model/userModel');
 
 const createToken = (user) => {
@@ -67,11 +69,14 @@ const authController = {
     if (!req.user) return res.status(401);
 
     const token = createToken(req.user);
+    const { name, ext } = req.user.profileImageName ? splitFileName(req.user.profileImageName) : {};
+
     const info = {
       activated: req.user.activated,
       email: req.user.email,
       name: req.user.name,
       nickname: req.user.nickname,
+      profileImage: req.user.profileImageName ? `${UPLOADS_URL}/images/${name}-thumb.${ext}` : null
     };
 
     return res.status(200).send({

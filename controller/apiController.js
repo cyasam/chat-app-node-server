@@ -1,33 +1,21 @@
-const jimp = require('jimp');
-const { UPLOADS_FOLDER, UPLOADS_URL } = require('../config/consts');
+const { UPLOADS_URL } = require('../config/consts');
+const { splitFileName, profileImageProcess } = require('../helpers');
 const User = require('../model/userModel');
-
-const splitFileName = (filename) => {
-  const fileNameSplit = filename.split('.');
-  const name = fileNameSplit[0];
-  const ext = fileNameSplit[1];
-
-  return { name, ext };
-};
-
-const profileImageProcess = image => jimp.read(image.path).then((profileImage) => {
-  const { name, ext } = splitFileName(image.filename);
-  profileImage.cover(70, 70).write(`${UPLOADS_FOLDER}/images/${name}-thumb.${ext}`);
-  return true;
-}).catch((err) => {
-  throw err;
-});
 
 const apiController = {
   getProfile(req, res) {
     User.findById(req.user.id, (err, user) => {
       if (!user) return res.send({ status: false, message: 'User not found.' });
 
+      const { name, ext } = req.user.profileImageName ?
+        splitFileName(req.user.profileImageName) : {};
+
       const response = {
         nickname: user.nickname,
         name: user.name,
         email: user.email,
-        activated: user.activated
+        activated: user.activated,
+        profileImage: req.user.profileImageName ? `${UPLOADS_URL}/images/${name}-thumb.${ext}` : null
       };
 
       return res.send({ status: true, ...response });

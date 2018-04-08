@@ -15,10 +15,8 @@ const upload = multer({
       cb(null, `${UPLOADS_FOLDER}/images`);
     },
     filename: (req, file, cb) => {
-      const fileNameSplit = file.originalname.split('.');
-      const name = fileNameSplit[0];
-      const ext = fileNameSplit[1];
-      cb(null, `${name}-${Date.now()}.${ext}`);
+      console.log(file);
+      cb(null, `${req.user.nickname}-${Date.now()}.png`);
     }
   })
 });

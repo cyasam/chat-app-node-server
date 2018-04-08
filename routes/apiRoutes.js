@@ -15,7 +15,6 @@ const upload = multer({
       cb(null, `${UPLOADS_FOLDER}/images`);
     },
     filename: (req, file, cb) => {
-      console.log(file);
       cb(null, `${req.user.nickname}-${Date.now()}.png`);
     }
   })

@@ -44,43 +44,42 @@ const apiController = {
     const { user, body } = req;
     const profileImage = req.file;
 
-    User.findById(user._id, (err, currentUser) => {
+    User.findById(user._id, async (err, currentUser) => {
       if (err) return res.status(500).send({ status: false, message: 'Internal Server Error' });
       if (!currentUser) return res.send({ status: false, message: 'User not found.' });
-      if (!body.oldPassword) return res.send({ status: false, message: 'Provide password.' });
 
       const UserSchema = new User(currentUser);
 
-      return UserSchema.comparePassword(body.oldPassword).then(async (ok) => {
-        if (!ok) return res.send({ status: false, message: 'Password is wrong.' });
+      if (body.password) {
+        body.password = await UserSchema.createHashPassword(body.password);
+      }
 
-        if (body.password) {
-          body.password = await UserSchema.createHashPassword(body.password);
-        }
+      const saveData = {
+        ...body,
+      };
 
-        const saveData = {
-          ...body,
+      if (profileImage) {
+        saveData.profileImageName = profileImage.filename;
+      }
+
+      return User.findByIdAndUpdate(user._id, saveData, { new: true }, (error, haveUser) => {
+        if (error) return res.status(500).send({ status: false, message: 'Internal Server Error' });
+        if (!haveUser) return res.status(422).send({ status: false, message: 'No Authorized Process.' });
+
+        const { name, ext } = haveUser.profileImageName ?
+          splitFileName(haveUser.profileImageName) : {};
+
+        const response = {
+          nickname: haveUser.nickname,
+          name: haveUser.name,
+          email: haveUser.email,
+          activated: haveUser.activated,
+          profileImage: haveUser.profileImageName ? `${UPLOADS_URL}/images/${name}-thumb.${ext}` : null
         };
 
-        if (profileImage) {
-          saveData.profileImageName = profileImage.filename;
-        }
+        if (profileImage && !profileImageProcess(profileImage)) return res.status(500).send({ status: false, message: 'Internal Server Error' });
 
-        return User.findByIdAndUpdate(user._id, saveData, { new: true }, (error, haveUser) => {
-          if (error) return res.status(500).send({ status: false, message: 'Internal Server Error' });
-          if (!haveUser) return res.status(422).send({ status: false, message: 'No Authorized Process.' });
-
-          const response = {
-            nickname: haveUser.nickname,
-            name: haveUser.name,
-            email: haveUser.email,
-            activated: haveUser.activated
-          };
-
-          if (profileImage && !profileImageProcess(profileImage)) return res.status(500).send({ status: false, message: 'Internal Server Error' });
-
-          return res.send({ status: true, ...response, message: 'Profile saved.' });
-        });
+        return res.send({ status: true, ...response, message: 'Profile saved.' });
       });
     });
   },

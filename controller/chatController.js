@@ -27,28 +27,34 @@ const chatController = (io) => {
     });
 
     socket.on('new message', (text) => {
-      const { email, nickname } = activeUsers[socket.userId];
-      socket.broadcast.emit('new message', {
-        email,
-        nickname,
-        text
-      });
+      if (activeUsers[socket.userId]) {
+        const { email, nickname } = activeUsers[socket.userId];
+        socket.broadcast.emit('new message', {
+          email,
+          nickname,
+          text
+        });
+      }
     });
 
     socket.on('typing', () => {
-      const { email, nickname } = activeUsers[socket.userId];
-      socket.broadcast.emit('typing', {
-        email,
-        nickname
-      });
+      if (activeUsers[socket.userId]) {
+        const { email, nickname } = activeUsers[socket.userId];
+        socket.broadcast.emit('typing', {
+          email,
+          nickname
+        });
+      }
     });
 
     socket.on('stop typing', () => {
-      const { email, nickname } = activeUsers[socket.userId];
-      socket.broadcast.emit('stop typing', {
-        email,
-        nickname
-      });
+      if (activeUsers[socket.userId]) {
+        const { email, nickname } = activeUsers[socket.userId];
+        socket.broadcast.emit('stop typing', {
+          email,
+          nickname
+        });
+      }
     });
 
     socket.on('disconnect', () => {

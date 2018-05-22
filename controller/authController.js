@@ -7,9 +7,9 @@ const { splitFileName } = require('../helpers');
 const { UPLOADS_URL } = require('../config/consts');
 const User = require('../model/userModel');
 
-const createToken = (user) => {
+const createToken = (userId) => {
   const payload = {
-    sub: user.id
+    sub: userId
   };
   return jwt.sign(payload, secretKey, { expiresIn: AUTH_EXPIRES_IN });
 };
@@ -68,7 +68,7 @@ const authController = {
   login(req, res) {
     if (!req.user) return res.status(401);
 
-    const token = createToken(req.user);
+    const token = createToken(req.user.id);
     const { name, ext } = req.user.profileImageName ? splitFileName(req.user.profileImageName) : {};
 
     const info = {

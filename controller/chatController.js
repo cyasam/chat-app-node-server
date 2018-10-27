@@ -7,8 +7,8 @@ const chatController = (io) => {
     const socket = sck;
 
     socket.on('add user', ({ email, nickname }) => {
-      const activeUserId = Object.keys(activeUsers).find(id =>
-        activeUsers[id].email === email);
+      const activeUserId = Object.keys(activeUsers)
+        .find(id => activeUsers[id].email === email);
 
       let userId;
       if (!activeUserId) {

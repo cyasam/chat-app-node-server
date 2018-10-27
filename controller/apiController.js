@@ -7,15 +7,15 @@ const apiController = {
     User.findById(req.user.id, (err, user) => {
       if (!user) return res.send({ status: false, message: 'User not found.' });
 
-      const { name, ext } = req.user.profileImageName ?
-        splitFileName(req.user.profileImageName) : {};
+      const { profileImageName } = req.user;
+      const { name, ext } = profileImageName ? splitFileName(profileImageName) : {};
 
       const response = {
         nickname: user.nickname,
         name: user.name,
         email: user.email,
         activated: user.activated,
-        profileImage: req.user.profileImageName ? `${UPLOADS_URL}/images/${name}-thumb.${ext}` : null
+        profileImage: profileImageName ? `${UPLOADS_URL}/images/${name}-thumb.${ext}` : null
       };
 
       return res.send({ status: true, ...response });
@@ -23,8 +23,12 @@ const apiController = {
   },
   getUsersList(req, res) {
     User.find({}, (err, usersList) => {
-      if (err) return res.status(500).send({ status: false, message: 'Internal Server Error' });
-      if (!usersList) return res.send({ status: false, message: 'Users not found.' });
+      if (err) {
+        return res.status(500).send({ status: false, message: 'Internal Server Error' });
+      }
+      if (!usersList) {
+        return res.send({ status: false, message: 'Users not found.' });
+      }
 
       const users = usersList.map((user) => {
         const { name, ext } = user.profileImageName ? splitFileName(user.profileImageName) : {};
@@ -66,15 +70,15 @@ const apiController = {
         if (error) return res.status(500).send({ status: false, message: 'Internal Server Error' });
         if (!haveUser) return res.status(422).send({ status: false, message: 'No Authorized Process.' });
 
-        const { name, ext } = haveUser.profileImageName ?
-          splitFileName(haveUser.profileImageName) : {};
+        const { profileImageName } = haveUser;
+        const { name, ext } = profileImageName ? splitFileName(profileImageName) : {};
 
         const response = {
           nickname: haveUser.nickname,
           name: haveUser.name,
           email: haveUser.email,
           activated: haveUser.activated,
-          profileImage: haveUser.profileImageName ? `${UPLOADS_URL}/images/${name}-thumb.${ext}` : null
+          profileImage: profileImageName ? `${UPLOADS_URL}/images/${name}-thumb.${ext}` : null
         };
 
         if (profileImage && !profileImageProcess(profileImage)) return res.status(500).send({ status: false, message: 'Internal Server Error' });

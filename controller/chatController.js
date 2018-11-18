@@ -6,7 +6,10 @@ const chatController = (io) => {
   io.on('connection', (sck) => {
     const socket = sck;
 
-    socket.on('add user', ({ email, nickname }) => {
+    socket.on('add user', ({
+      email,
+      nickname
+    }) => {
       const activeUserId = Object.keys(activeUsers)
         .find(id => activeUsers[id].email === email);
 
@@ -28,7 +31,10 @@ const chatController = (io) => {
 
     socket.on('new message', (text) => {
       if (activeUsers[socket.userId]) {
-        const { email, nickname } = activeUsers[socket.userId];
+        const {
+          email,
+          nickname
+        } = activeUsers[socket.userId];
         socket.broadcast.emit('new message', {
           email,
           nickname,
@@ -39,7 +45,10 @@ const chatController = (io) => {
 
     socket.on('typing', () => {
       if (activeUsers[socket.userId]) {
-        const { email, nickname } = activeUsers[socket.userId];
+        const {
+          email,
+          nickname
+        } = activeUsers[socket.userId];
         socket.broadcast.emit('typing', {
           email,
           nickname
@@ -49,7 +58,10 @@ const chatController = (io) => {
 
     socket.on('stop typing', () => {
       if (activeUsers[socket.userId]) {
-        const { email, nickname } = activeUsers[socket.userId];
+        const {
+          email,
+          nickname
+        } = activeUsers[socket.userId];
         socket.broadcast.emit('stop typing', {
           email,
           nickname

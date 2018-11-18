@@ -1,8 +1,14 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const { bcrypt: { saltRounds } } = require('../config/keys');
+const {
+  bcrypt: {
+    saltRounds
+  }
+} = require('../config/keys');
 
-const { Schema } = mongoose;
+const {
+  Schema
+} = mongoose;
 
 const UserSchema = new Schema({
   nickname: {
@@ -18,10 +24,22 @@ const UserSchema = new Schema({
     lowercase: true,
     unique: true
   },
-  password: { type: String, required: true },
-  activated: { type: Boolean, default: false, required: true },
-  activationKey: { type: String, required: true },
-  profileImageName: { type: String }
+  password: {
+    type: String,
+    required: true
+  },
+  activated: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
+  activationKey: {
+    type: String,
+    required: true
+  },
+  profileImageName: {
+    type: String
+  }
 });
 
 UserSchema.virtual('id').get(function id() {
@@ -43,7 +61,9 @@ UserSchema.methods.createHashPassword = function createHashPassword(password) {
 };
 
 UserSchema.pre('save', function preSave(next) {
-  const { password } = this;
+  const {
+    password
+  } = this;
 
   this.createHashPassword(password).then((hash) => {
     this.password = hash;

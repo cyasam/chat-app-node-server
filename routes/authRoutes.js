@@ -6,7 +6,9 @@ const {
   registerComplete
 } = require('../controller/authController');
 
-router.post('/login', passport.authenticate('local', { session: false }), login);
+router.post('/login', passport.authenticate('local', {
+  session: false
+}), login);
 router.post('/register', register);
 router.put('/register/complete', registerComplete);
 

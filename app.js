@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
@@ -36,8 +37,15 @@ app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
 
 app.get('*', (req, res) => {
-  res.send({
-    message: 'URL doesn\'t exist'
+  fs.readFile('./public/index.html', (err, html) => {
+    if (err) {
+      throw err;
+    }
+    res.writeHeader(200, {
+      'Content-Type': 'text/html'
+    });
+    res.write(html);
+    res.end();
   });
 });
 

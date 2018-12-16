@@ -18,8 +18,8 @@ const {
 } = require('./config/keys');
 const chatController = require('./controller/chatController');
 
-
 mongoose.connect(mongoDB.uri, {
+  useCreateIndex: true,
   useNewUrlParser: true
 }, () => console.log('connected to DB.'));
 

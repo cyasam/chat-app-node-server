@@ -1,24 +1,22 @@
 const uuidv4 = require('uuid/v4');
 
-const chatController = (io) => {
+const chatController = io => {
   const activeUsers = {};
 
-  io.on('connection', (sck) => {
+  io.on('connection', sck => {
     const socket = sck;
 
-    socket.on('add user', ({
-      email,
-      nickname
-    }) => {
-      const activeUserId = Object.keys(activeUsers)
-        .find(id => activeUsers[id].email === email);
+    socket.on('add user', ({ email, nickname }) => {
+      const activeUserId = Object.keys(activeUsers).find(
+        id => activeUsers[id].email === email,
+      );
 
       let userId;
       if (!activeUserId) {
         userId = uuidv4();
         const newUser = {
           email,
-          nickname
+          nickname,
         };
         activeUsers[userId] = newUser;
       }
@@ -29,42 +27,33 @@ const chatController = (io) => {
       io.sockets.emit('active users', activeUsers);
     });
 
-    socket.on('new message', (text) => {
+    socket.on('new message', text => {
       if (activeUsers[socket.userId]) {
-        const {
-          email,
-          nickname
-        } = activeUsers[socket.userId];
+        const { email, nickname } = activeUsers[socket.userId];
         socket.broadcast.emit('new message', {
           email,
           nickname,
-          text
+          text,
         });
       }
     });
 
     socket.on('typing', () => {
       if (activeUsers[socket.userId]) {
-        const {
-          email,
-          nickname
-        } = activeUsers[socket.userId];
+        const { email, nickname } = activeUsers[socket.userId];
         socket.broadcast.emit('typing', {
           email,
-          nickname
+          nickname,
         });
       }
     });
 
     socket.on('stop typing', () => {
       if (activeUsers[socket.userId]) {
-        const {
-          email,
-          nickname
-        } = activeUsers[socket.userId];
+        const { email, nickname } = activeUsers[socket.userId];
         socket.broadcast.emit('stop typing', {
           email,
-          nickname
+          nickname,
         });
       }
     });

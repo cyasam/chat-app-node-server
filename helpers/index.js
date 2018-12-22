@@ -1,31 +1,50 @@
 const jimp = require('jimp');
 const {
-  UPLOADS_FOLDER
+  SERVER_BASE_URL,
+  UPLOADS_FOLDER,
+  UPLOADS_URL,
 } = require('../config/consts');
 
-const splitFileName = (filename) => {
+const splitFileName = filename => {
   const fileNameSplit = filename.split('.');
   const name = fileNameSplit[0];
   const ext = fileNameSplit[1];
 
   return {
     name,
-    ext
+    ext,
   };
 };
 
-const profileImageProcess = image => jimp.read(image.path).then((profileImage) => {
-  const {
-    name,
-    ext
-  } = splitFileName(image.filename);
-  profileImage.cover(70, 70).write(`${UPLOADS_FOLDER}/images/${name}-thumb.${ext}`);
-  return true;
-}).catch((err) => {
-  throw err;
-});
+const profileImageProcess = image =>
+  jimp
+    .read(image.path)
+    .then(profileImage => {
+      const { name, ext } = splitFileName(image.filename);
+      profileImage
+        .cover(70, 70)
+        .write(`${UPLOADS_FOLDER}/images/${name}-thumb.${ext}`);
+      return true;
+    })
+    .catch(err => {
+      throw err;
+    });
+
+const createProfileImageObject = image => {
+  const { name, ext } = image ? splitFileName(image) : {};
+  const profileImage = {};
+  const uploadsUrl = `${SERVER_BASE_URL}${UPLOADS_URL}`;
+
+  profileImage.thumb = image
+    ? `${uploadsUrl}/images/${name}-thumb.${ext}`
+    : null;
+  profileImage.original = image ? `${uploadsUrl}/images/${name}.${ext}` : null;
+
+  return profileImage;
+};
 
 module.exports = {
   splitFileName,
-  profileImageProcess
+  profileImageProcess,
+  createProfileImageObject,
 };

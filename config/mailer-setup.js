@@ -1,23 +1,26 @@
 const nodemailer = require('nodemailer');
-const { smtpMail } = require('./keys');
-const { CLIENT_BASE_URL } = require('./consts');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: smtpMail.user,
-    pass: smtpMail.password,
-  },
+    user: process.env.SMTPMAIL_USERNAME,
+    pass: process.env.SMTPMAIL_PASSWORD
+  }
 });
 
 const accountActivationMail = (email, name, activationKey) =>
   new Promise((resolve, reject) => {
     const mailOptions = {
-      from: `${smtpMail.senderName} ${smtpMail.user}`,
+      from: `${process.env.SMTPMAIL_SENDERNAME} ${
+        process.env.SMTPMAIL_USERNAME
+      }`,
       to: email,
       subject: 'Please activate your account - Chat App',
-      html: `<p>Hello ${name ||
-        'User'}</p><p><a href="${CLIENT_BASE_URL}/register/complete?key=${activationKey}">Please activate your account.</a></p>`,
+      html: `<p>Hello ${name || 'User'}</p>
+      <p><a href="${
+        process.env.CLIENT_BASE_URL
+      }/register/complete?key=${activationKey}">
+      Please activate your account.</a></p>`
     };
 
     transporter.sendMail(mailOptions, error => {
@@ -30,5 +33,5 @@ const accountActivationMail = (email, name, activationKey) =>
   });
 
 module.exports = {
-  accountActivationMail,
+  accountActivationMail
 };

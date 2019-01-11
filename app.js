@@ -1,3 +1,9 @@
+const dotenv = require('dotenv');
+
+if (process.env.NODE_ENV === 'development') {
+  dotenv.config();
+}
+
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
@@ -12,22 +18,26 @@ const io = require('socket.io')(http);
 const passportSetup = require('./config/passport-setup');
 const apiRoutes = require('./routes/apiRoutes');
 const authRoutes = require('./routes/authRoutes');
-const {
-  PORT,
-  mongoDB
-} = require('./config/keys');
 const chatController = require('./controller/chatController');
 
-mongoose.connect(mongoDB.uri, {
-  useCreateIndex: true,
-  useNewUrlParser: true
-}, () => console.log('connected to DB.'));
+const PORT = process.env.PORT || 4567;
+
+mongoose.connect(
+  process.env.MONGODB_URI,
+  {
+    useCreateIndex: true,
+    useNewUrlParser: true
+  },
+  () => console.log('connected to DB.')
+);
 
 app.use(helmet());
 app.use(cors());
-app.use(bodyParser.urlencoded({
-  extended: false
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: false
+  })
+);
 app.use(bodyParser.json());
 app.use(express.static('public'));
 passportSetup();

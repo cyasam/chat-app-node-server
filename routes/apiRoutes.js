@@ -2,9 +2,6 @@ const router = require('express').Router();
 const passport = require('passport');
 const multer = require('multer');
 const {
-  UPLOADS_FOLDER
-} = require('../config/consts');
-const {
   getProfile,
   getUsersList,
   saveProfile,
@@ -14,7 +11,7 @@ const {
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, `${UPLOADS_FOLDER}/images`);
+      cb(null, `${process.env.UPLOADS_FOLDER}/images`);
     },
     filename: (req, file, cb) => {
       cb(null, `${req.user.nickname}-${Date.now()}.png`);
@@ -22,17 +19,32 @@ const upload = multer({
   })
 });
 
-router.get('/profile', passport.authenticate('jwt', {
-  session: false
-}), getProfile);
+router.get(
+  '/profile',
+  passport.authenticate('jwt', {
+    session: false
+  }),
+  getProfile
+);
 
-router.get('/userlist', passport.authenticate('jwt', {
-  session: false
-}), getUsersList);
+router.get(
+  '/userlist',
+  passport.authenticate('jwt', {
+    session: false
+  }),
+  getUsersList
+);
 
-router.post('/profile/save', [passport.authenticate('jwt', {
-  session: false
-}), upload.single('profileImage')], saveProfile);
+router.post(
+  '/profile/save',
+  [
+    passport.authenticate('jwt', {
+      session: false
+    }),
+    upload.single('profileImage')
+  ],
+  saveProfile
+);
 
 router.get('/checknickname', checkNickname);
 

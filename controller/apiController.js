@@ -17,7 +17,10 @@ const apiController = {
         name: user.name,
         email: user.email,
         activated: user.activated,
-        profileImage: createProfileImageObject(profileImageName),
+        profileImage: createProfileImageObject(
+          profileImageName,
+          req.headers.host,
+        ),
       };
 
       return res.send({
@@ -46,7 +49,10 @@ const apiController = {
         name: user.name,
         nickname: user.nickname,
         email: user.email,
-        profileImage: createProfileImageObject(user.profileImageName),
+        profileImage: createProfileImageObject(
+          user.profileImageName,
+          req.headers.host,
+        ),
       }));
 
       return res.send({
@@ -110,7 +116,10 @@ const apiController = {
             name: haveUser.name,
             email: haveUser.email,
             activated: haveUser.activated,
-            profileImage: createProfileImageObject(profileImageName),
+            profileImage: createProfileImageObject(
+              profileImageName,
+              req.headers.host,
+            ),
           };
 
           if (profileImage && !profileImageProcess(profileImage))

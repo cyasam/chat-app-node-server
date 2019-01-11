@@ -1,10 +1,6 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { accountActivationMail } = require('../config/mailer-setup');
-const {
-  token: { secretKey },
-} = require('../config/keys');
-const { AUTH_EXPIRES_IN } = require('../config/consts');
 const { createProfileImageObject } = require('../helpers');
 const User = require('../model/userModel');
 
@@ -12,8 +8,9 @@ const createToken = userId => {
   const payload = {
     sub: userId,
   };
-  return jwt.sign(payload, secretKey, {
-    expiresIn: AUTH_EXPIRES_IN,
+
+  return jwt.sign(payload, process.env.TOKEN_SECRETKEY, {
+    expiresIn: Number(process.env.AUTH_EXPIRES_IN),
   });
 };
 
@@ -124,7 +121,10 @@ const authController = {
     if (!req.user) return res.status(401);
 
     const token = createToken(req.user.id);
-    const profileImage = createProfileImageObject(req.user.profileImageName);
+    const profileImage = createProfileImageObject(
+      req.user.profileImageName,
+      req.headers.host,
+    );
 
     const info = {
       activated: req.user.activated,

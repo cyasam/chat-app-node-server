@@ -1,9 +1,4 @@
 const jimp = require('jimp');
-const {
-  SERVER_BASE_URL,
-  UPLOADS_FOLDER,
-  UPLOADS_URL,
-} = require('../config/consts');
 
 const splitFileName = filename => {
   const fileNameSplit = filename.split('.');
@@ -23,17 +18,17 @@ const profileImageProcess = image =>
       const { name, ext } = splitFileName(image.filename);
       profileImage
         .cover(70, 70)
-        .write(`${UPLOADS_FOLDER}/images/${name}-thumb.${ext}`);
+        .write(`${process.env.UPLOADS_FOLDER}/images/${name}-thumb.${ext}`);
       return true;
     })
     .catch(err => {
       throw err;
     });
 
-const createProfileImageObject = image => {
+const createProfileImageObject = (image, serverBaseUrl) => {
   const { name, ext } = image ? splitFileName(image) : {};
   const profileImage = {};
-  const uploadsUrl = `${SERVER_BASE_URL}${UPLOADS_URL}`;
+  const uploadsUrl = `//${serverBaseUrl}${process.env.UPLOADS_URL}`;
 
   profileImage.thumb = image
     ? `${uploadsUrl}/images/${name}-thumb.${ext}`

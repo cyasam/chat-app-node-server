@@ -1,45 +1,38 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const {
-  bcrypt: {
-    saltRounds
-  }
-} = require('../config/keys');
 
-const {
-  Schema
-} = mongoose;
+const { Schema } = mongoose;
 
 const UserSchema = new Schema({
   nickname: {
-    type: String
+    type: String,
   },
   name: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
     required: true,
     lowercase: true,
-    unique: true
+    unique: true,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   activated: {
     type: Boolean,
     default: false,
-    required: true
+    required: true,
   },
   activationKey: {
     type: String,
-    required: true
+    required: true,
   },
   profileImageName: {
-    type: String
-  }
+    type: String,
+  },
 });
 
 UserSchema.virtual('id').get(function id() {
@@ -47,7 +40,7 @@ UserSchema.virtual('id').get(function id() {
 });
 
 UserSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
 });
 
 UserSchema.methods.comparePassword = function comparePassword(password) {
@@ -55,21 +48,27 @@ UserSchema.methods.comparePassword = function comparePassword(password) {
 };
 
 UserSchema.methods.createHashPassword = function createHashPassword(password) {
-  return bcrypt.genSalt(saltRounds)
-    .then(salt => bcrypt.hash(password, salt).then(hash => hash).catch(() => 'hash error'))
+  return bcrypt
+    .genSalt(Number(process.env.SALTROUNDS))
+    .then(salt =>
+      bcrypt
+        .hash(password, salt)
+        .then(hash => hash)
+        .catch(() => 'hash error'),
+    )
     .catch(() => 'salt error');
 };
 
 UserSchema.pre('save', function preSave(next) {
-  const {
-    password
-  } = this;
+  const { password } = this;
 
-  this.createHashPassword(password).then((hash) => {
-    this.password = hash;
+  this.createHashPassword(password)
+    .then(hash => {
+      this.password = hash;
 
-    next();
-  }).catch(error => next(error));
+      next();
+    })
+    .catch(error => next(error));
 });
 
 const UserModel = mongoose.model('user', UserSchema);
